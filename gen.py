@@ -94,4 +94,7 @@ if __name__ == "__main__":
                 else:
                     print('either line or example sentence is missing for: {line}')
             except Exception as e:
+                print('*************')
                 print(e)
+                print('word: {}'.format(line))
+                print('*************')
