@@ -5,9 +5,9 @@ import requests
 import os
 
 # note type
-kMODEL_NAME= "JapaneseNote"
+kMODEL_NAME= "JapaneseNoteOneSide"
 # deck name
-kDECK_NAME = "kotobank"
+kDECK_NAME = "Japanese Kotobank"
 # fields for note
 kNOTE_FIELDS= {
     'Japanese Example Sentence':'',
@@ -41,6 +41,7 @@ def voidCreateNote(strExpression, strExampleSentence):
     noteFields['Expression'] = strExpression
     noteFields['Japanese Example Sentence'] = strExampleSentence.replace(strExpression.strip(),'___')
     noteFields['Test Word Alone?'] = "y"
+    noteFields['Japanese Definition'] = strGetDefinitions(strExpression)
 
     note = {
         'deckName':kDECK_NAME,
@@ -74,12 +75,29 @@ def strGetExampleSentence(strWord):
             return line
     return strSentence
 
+def strGetDefinitions(strWord):
+    """
+    Get definitions from goo.jp
+    """
+    strBaseUrl = "https://dictionary.goo.ne.jp/word/"
+
+    strRes = ""
+
+    res = requests.get(strBaseUrl + strWord)
+    soup = BeautifulSoup(res.text,'html.parser')
+    listElementDefs = soup.find_all('ol',{'class':'meaning cx'})
+    for e in listElementDefs:
+        strRes += e.find('p',{'class':'text'}).get_text() + "\n"
+    return strRes
+
 if __name__ == "__main__":
     # get args
     args = sys.argv
     if len(args) != 2:
         print("usage:\npython3 gen.py [TEXT FILE]")
         exit(1)
+    
+    listErrorWords = []
     
     strTextFileName = args[1]
     # get permissions
@@ -98,3 +116,7 @@ if __name__ == "__main__":
                 print(e)
                 print('word: {}'.format(line))
                 print('*************')
+    # write the errors
+    with open('error_words.txt','w') as f:
+        for word in listErrorWords:
+            f.write(word)
