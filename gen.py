@@ -6,7 +6,7 @@ import requests
 import os
 from PIL import Image
 
-kICON_HEIGHT = 700
+kICON_HEIGHT = 1000
 kAUDIO_PATH = "audio"
 kIMG_PATH = "imgs"
 kLOCAL_DIR = os.getcwd()
