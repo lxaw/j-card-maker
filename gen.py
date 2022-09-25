@@ -130,15 +130,21 @@ def voidCreateNote(strExpression, strExampleSentence):
     """
     Make a card with expression and example sentence
     """
+
+
     # remove new lines
     strExpression = strExpression.strip()
+
+    audioPath = '{}/{}/{}.mp3'.format(kLOCAL_DIR,kAUDIO_PATH,strExpression)
+    imgPath = '{}/{}/{}.jpg'.format(kLOCAL_DIR,kIMG_PATH,strExpression)
+
     # gen audio
     voidGenAudio(strExpression,strExampleSentence)
     # gen image
-    voidSearchAndDownloadTopImg(strExpression,"{}/{}/{}.jpg".format(kLOCAL_DIR,kIMG_PATH,strExpression))
+    voidSearchAndDownloadTopImg(strExpression,imgPath)
+
+
     noteFields = kNOTE_FIELDS
-
-
     noteFields['Expression'] = strExpression
     noteFields['Japanese Example Sentence'] = strExampleSentence.replace(strExpression,'___')
     noteFields['Japanese Definition'] = strGetDefinitions(strExpression)
@@ -151,24 +157,23 @@ def voidCreateNote(strExpression, strExampleSentence):
             'allowDuplicate':True,
         },
         "audio":[{
-            'path':'{}/{}/{}.mp3'.format(kLOCAL_DIR,kAUDIO_PATH,strExpression),
+            'path':audioPath,
             'filename':'my_audio__{}.mp3'.format(strExpression),
-            'fields':['Recording']
+            'fields':['Recording','Audio']
         }]
         ,
         "picture":[{
-            'path':'{}/{}/{}.jpg'.format(kLOCAL_DIR,kIMG_PATH,strExpression),
+            'path':imgPath,
             'filename':'my_img__{}.jpg'.format(strExpression),
             'fields':['Image']
         }]
-        
     }
+
     invoke('addNote',note=note)
     # delete audio after
-    os.remove('{}/{}/{}.mp3'.format(kLOCAL_DIR,kAUDIO_PATH,strExpression))
+    os.remove(audioPath)
     # delete img after
-    os.remove('{}/{}/{}.jpg'.format(kLOCAL_DIR,kIMG_PATH,strExpression))
-
+    os.remove(imgPath)
 
 if __name__ == "__main__":
     # get args
@@ -195,7 +200,3 @@ if __name__ == "__main__":
                 print(e)
                 print('word: {}'.format(line))
                 print('*************')
-    # write the errors
-    with open('error_words.txt','w') as f:
-        for word in listErrorWords:
-            f.write(word)
