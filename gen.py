@@ -54,10 +54,14 @@ def strGetDefinitions(strWord):
 
     res = requests.get(strBaseUrl + strWord)
     soup = BeautifulSoup(res.text,'html.parser')
-    listElementDefs = soup.find_all('ol',{'class':'meaning cx'})
+    listElementDefs = soup.find_all('div',{'class':'meaning'})
+    if len(listElementDefs) == 0:
+        listElementDefs = soup.find_all('div',{'class':'meanging'})
     for e in listElementDefs:
-        strRes += e.find('p',{'class':'text'}).get_text() + "\n"
-    return strRes
+        for e in listElementDefs:
+            strRes += "".join(e.get_text().split())
+
+    return strRes.strip()
 
 # Given a formatted query (see strFormatQuery)
 # create a GoogleImages formatted URL.
@@ -122,7 +126,7 @@ def voidGenAudio(strWord,strSentence):
     """
     Generate audio for sentence.
     """
-    cmd = "edge-tts --voice ja-JP-NanamiNeural --text '{}' --write-media {}/{}/{}.mp3".format(strSentence,kLOCAL_DIR,kAUDIO_PATH,strWord.strip())
+    cmd = "edge-tts --voice ja-JP-NanamiNeural --text '{}' --write-media {}/{}/{}.mp3".format('.' + strSentence,kLOCAL_DIR,kAUDIO_PATH,strWord.strip())
     os.system(cmd)
 
 
@@ -175,28 +179,45 @@ def voidCreateNote(strExpression, strExampleSentence):
     # delete img after
     os.remove(imgPath)
 
-if __name__ == "__main__":
-    # get args
-    args = sys.argv
-    if len(args) != 2:
-        print("usage:\npython3 gen.py [TEXT FILE]")
-        exit(1)
+# if __name__ == "__main__":
+#     # get args
+#     args = sys.argv
+#     if len(args) != 2:
+#         print("usage:\npython3 gen.py [TEXT FILE]")
+#         exit(1)
 
-    listErrorWords = []
+#     listErrorWords = []
     
-    strTextFileName = args[1]
-    # get permissions
-    with open(strTextFileName,'r') as f:
-        for line in f:
-            try:
+#     strTextFileName = args[1]
+#     # get permissions
+#     with open(strTextFileName,'r') as f:
+#         for line in f:
+#             try:
 
-                strExampleSentence = strGetExampleSentence(line.strip())
-                if line != '' and strExampleSentence != '':
-                    voidCreateNote(line,strExampleSentence)
-                else:
-                    print('either line or example sentence is missing for: {line}')
-            except Exception as e:
-                print('*************')
-                print(e)
-                print('word: {}'.format(line))
-                print('*************')
+#                 strExampleSentence = strGetExampleSentence(line.strip())
+#                 if line != '' and strExampleSentence != '':
+#                     voidCreateNote(line,strExampleSentence)
+#                 else:
+#                     print('either line or example sentence is missing for: {line}')
+#             except Exception as e:
+#                 print('*************')
+#                 print(e)
+#                 print('word: {}'.format(line))
+#                 print('*************')
+
+if __name__ == "__main__":
+    print(strGetDefinitions('たわわ'))
+class ViewsetDataAccel(viewsets.ModelViewSet):
+    queryset = DataAccel.objects.all()
+
+    permission_classes = [
+        permissions.IsAuthenticated
+    ]
+
+    serializer_class = SerializerDataAccel
+
+    def get_queryset(self):
+        return self.request.user.data_accels.all()
+    
+    def perform_create(self,serializer):
+        serializer.save(author=self.request.user)
