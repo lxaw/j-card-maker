@@ -59,7 +59,8 @@ def strGetDefinitions(strWord):
         listElementDefs = soup.find_all('div',{'class':'meanging'})
     for e in listElementDefs:
         for e in listElementDefs:
-            strRes += "".join(e.get_text().split())
+            strText = " ".join(e.get_text().split())
+            strRes += strText
 
     return strRes.strip()
 
@@ -179,45 +180,28 @@ def voidCreateNote(strExpression, strExampleSentence):
     # delete img after
     os.remove(imgPath)
 
-# if __name__ == "__main__":
-#     # get args
-#     args = sys.argv
-#     if len(args) != 2:
-#         print("usage:\npython3 gen.py [TEXT FILE]")
-#         exit(1)
-
-#     listErrorWords = []
-    
-#     strTextFileName = args[1]
-#     # get permissions
-#     with open(strTextFileName,'r') as f:
-#         for line in f:
-#             try:
-
-#                 strExampleSentence = strGetExampleSentence(line.strip())
-#                 if line != '' and strExampleSentence != '':
-#                     voidCreateNote(line,strExampleSentence)
-#                 else:
-#                     print('either line or example sentence is missing for: {line}')
-#             except Exception as e:
-#                 print('*************')
-#                 print(e)
-#                 print('word: {}'.format(line))
-#                 print('*************')
-
 if __name__ == "__main__":
-    print(strGetDefinitions('たわわ'))
-class ViewsetDataAccel(viewsets.ModelViewSet):
-    queryset = DataAccel.objects.all()
+    # get args
+    args = sys.argv
+    if len(args) != 2:
+        print("usage:\npython3 gen.py [TEXT FILE]")
+        exit(1)
 
-    permission_classes = [
-        permissions.IsAuthenticated
-    ]
+    listErrorWords = []
+  
+    strTextFileName = args[1]
+    # get permissions
+    with open(strTextFileName,'r') as f:
+        for line in f:
+            try:
 
-    serializer_class = SerializerDataAccel
-
-    def get_queryset(self):
-        return self.request.user.data_accels.all()
-    
-    def perform_create(self,serializer):
-        serializer.save(author=self.request.user)
+                strExampleSentence = strGetExampleSentence(line.strip())
+                if line != '' and strExampleSentence != '':
+                    voidCreateNote(line,strExampleSentence)
+                else:
+                    print('either line or example sentence is missing for: {line}')
+            except Exception as e:
+                print('*************')
+                print(e)
+                print('word: {}'.format(line))
+                print('*************')
