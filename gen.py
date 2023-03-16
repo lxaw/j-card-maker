@@ -127,7 +127,7 @@ def voidGenAudio(strWord,strSentence):
     """
     Generate audio for sentence.
     """
-    cmd = "edge-tts --voice ja-JP-NanamiNeural --text '{}' --write-media {}/{}/{}.mp3".format('.' + strSentence,kLOCAL_DIR,kAUDIO_PATH,strWord.strip())
+    cmd = "pipenv run tts --text '{}' --model_name 'tts_models/ja/kokoro/tacotron2-DDC' --out_path '{}/{}/{}.mp3'".format('.' + strSentence,kLOCAL_DIR,kAUDIO_PATH,strWord.strip())
     os.system(cmd)
 
 
