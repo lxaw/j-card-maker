@@ -10,6 +10,7 @@ kICON_HEIGHT = 1000
 kAUDIO_PATH = "audio"
 kIMG_PATH = "imgs"
 kLOCAL_DIR = os.getcwd()
+kHEADERS = headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.76 Safari/537.36', "Upgrade-Insecure-Requests": "1","DNT": "1","Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8","Accept-Language": "en-US,en;q=0.5","Accept-Encoding": "gzip, deflate"}
 
 # note type
 kMODEL_NAME= "JapaneseNoteOneSide"
@@ -34,7 +35,7 @@ def strGetExampleSentence(strWord):
     """
     Gets example sentence from yourei.jp
     """
-    res = requests.get(kSITE_URL_BASE+strWord)
+    res = requests.get(kSITE_URL_BASE+strWord,headers=kHEADERS)
     soup = BeautifulSoup(res.text,'html.parser')
     # get the first sentence
     strSentence= soup.find(id='sentence-1').text.split('...')[0]
@@ -200,6 +201,8 @@ if __name__ == "__main__":
                     voidCreateNote(line,strExampleSentence)
                 else:
                     print('either line or example sentence is missing for: {line}')
+                
+                sleep(0.5)
             except Exception as e:
                 print('*************')
                 print(e)
