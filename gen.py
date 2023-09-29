@@ -128,7 +128,7 @@ def voidGenAudio(strWord,strSentence):
     """
     Generate audio for sentence.
     """
-    cmd = "pipenv run tts --text '{}' --model_name 'tts_models/ja/kokoro/tacotron2-DDC' --out_path '{}/{}/{}.mp3'".format('.' + strSentence,kLOCAL_DIR,kAUDIO_PATH,strWord.strip())
+    cmd = "pipenv run edge-tts --voice ja-JP-NanamiNeural  --text '{}' --write-media '{}/{}/{}.mp3'".format('.' + strSentence,kLOCAL_DIR,kAUDIO_PATH,strWord.strip())
     os.system(cmd)
 
 
@@ -202,7 +202,6 @@ if __name__ == "__main__":
                 else:
                     print('either line or example sentence is missing for: {line}')
                 
-                sleep(0.5)
             except Exception as e:
                 print('*************')
                 print(e)
